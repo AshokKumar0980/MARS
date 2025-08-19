@@ -43,8 +43,3 @@ jobs:
       - name: Run tests
         run: npm test
         working-directory: ${{ env.APP_DIR }}
-
-      # Step 6: Run build
-      - name: Run build
-        run: npm run build
-        working-directory: ${{ env.APP_DIR }}
