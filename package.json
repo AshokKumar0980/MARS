@@ -4,10 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "test": "echo \"No tests defined\"",
-  "build": "echo \"Building the project...\""
-}
-
+    "test": "echo \"No tests defined\"",
+    "build": "echo \"Building the project...\""
   },
   "repository": {
     "type": "git",
