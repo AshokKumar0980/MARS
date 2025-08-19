@@ -12,7 +12,7 @@ jobs:
 
     env:
       # Set this to the folder containing package.json, or "." if at root
-      APP_DIR: ./frontend
+      APP_DIR: .
 
     steps:
       # Step 1: Checkout the repository
