@@ -10,6 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      # Set this to the folder containing package.json, or "." if at root
+      APP_DIR: ./frontend
+
     steps:
       # Step 1: Checkout the repository
       - name: Checkout code
@@ -26,18 +30,21 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('${{ env.APP_DIR }}/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       # Step 4: Install dependencies
       - name: Install dependencies
         run: npm install
+        working-directory: ${{ env.APP_DIR }}
 
       # Step 5: Run tests
       - name: Run tests
         run: npm test
+        working-directory: ${{ env.APP_DIR }}
 
       # Step 6: Run build
       - name: Run build
         run: npm run build
+        working-directory: ${{ env.APP_DIR }}
