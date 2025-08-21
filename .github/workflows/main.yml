@@ -36,10 +36,19 @@ jobs:
     
     - name: Wait for MySQL
       run: |
-        until mysqladmin ping -h"127.0.0.1" -P3306 --silent; do
-          echo 'waiting for mysql...'
+        echo "Waiting for MySQL to be ready..."
+        for i in {1..30}; do
+          if mysqladmin ping -h"127.0.0.1" -P3306 -u testuser -ptestpass --silent; then
+            echo "MySQL is ready!"
+            break
+          fi
+          echo "Attempt $i/30: MySQL not ready, waiting..."
           sleep 2
         done
+    
+    - name: Verify MySQL connection
+      run: |
+        mysql -h 127.0.0.1 -P 3306 -u testuser -ptestpass testdb -e "SELECT 'Connection successful' as status;"
     
     - name: Run database migrations
       run: npm run migrate
@@ -51,8 +60,9 @@ jobs:
         DB_PASSWORD: testpass
     
     - name: Run tests
-      run: npm test
+      run: npm run test:ci
       env:
+        CI: true
         DB_HOST: 127.0.0.1
         DB_PORT: 3306
         DB_NAME: testdb
