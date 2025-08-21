@@ -1,50 +1,60 @@
-name: CI Pipeline
+name: CI Pipeline with MySQL
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
     branches: [ main ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
-    env:
-      # Set this to the folder containing package.json, or "." if at root
-      APP_DIR: .
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: testdb
+          MYSQL_USER: testuser
+          MYSQL_PASSWORD: testpass
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Step 2: Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      # Step 3: Cache npm dependencies
-      - name: Cache Node modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('${{ env.APP_DIR }}/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      # Step 4: Install dependencies
-      - name: Install dependencies
-        run: npm install
-        working-directory: ${{ env.APP_DIR }}
-
-      # Step 5: Run tests
-      - name: Run tests
-        run: npm test
-        working-directory: ${{ env.APP_DIR }}
-
-      # Step 6: Run build
-      - name: Run build
-        run: npm run build
-        working-directory: ${{ env.APP_DIR }}
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Wait for MySQL
+      run: |
+        until mysqladmin ping -h"127.0.0.1" -P3306 --silent; do
+          echo 'waiting for mysql...'
+          sleep 2
+        done
+    
+    - name: Run database migrations
+      run: npm run migrate
+      env:
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_NAME: testdb
+        DB_USER: testuser
+        DB_PASSWORD: testpass
+    
+    - name: Run tests
+      run: npm test
+      env:
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_NAME: testdb
+        DB_USER: testuser
+        DB_PASSWORD: testpass
