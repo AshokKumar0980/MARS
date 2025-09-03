@@ -20,11 +20,14 @@
       "**/__tests__/**/*.js",
       "**/*.(test|spec).js"
     ],
-    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"]
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ]
   },
   "dependencies": {
+    "dotenv": "^16.6.1",
     "mysql2": "^3.6.0",
-    "dotenv": "^16.3.1"
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "jest": "^29.7.0",

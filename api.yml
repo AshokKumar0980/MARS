@@ -15,8 +15,8 @@ jobs:
         image: postgres:17
         env:
           POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testpass
-          POSTGRES_DB: demopractice
+          POSTGRES_PASSWORD: Sriakka@1996
+          POSTGRES_DB: demo practice
         ports:
           - 5432:5432
         options: >-
@@ -58,9 +58,9 @@ jobs:
       env:
         DB_HOST: 127.0.0.1
         DB_PORT: 5432
-        DB_NAME: demopractice
+        DB_NAME: demo practice
         DB_USER: testuser
-        DB_PASSWORD: testpass
+        DB_PASSWORD: Sriakka@1996
     
     - name: Run tests
       run: npm run test:ci
@@ -68,6 +68,6 @@ jobs:
         CI: true
         DB_HOST: 127.0.0.1
         DB_PORT: 5432
-        DB_NAME: demopractice
+        DB_NAME: demo practice
         DB_USER: testuser
-        DB_PASSWORD: testpass
+        DB_PASSWORD: Sriakka@1996
